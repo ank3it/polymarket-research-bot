@@ -1,7 +1,7 @@
 """LLM prompt templates for decomposition and estimation."""
 from __future__ import annotations
 
-from research_bot.models import Evidence, Market, SubQuestion
+from polymarket_research_core.models import Evidence, Market, SubQuestion
 
 DECOMPOSE_SYSTEM = (
     "You are a forecasting analyst. You break a prediction-market question into a "

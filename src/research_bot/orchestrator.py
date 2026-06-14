@@ -6,15 +6,15 @@ import logging
 from research_bot.budget import BudgetGuard
 from research_bot.config import Settings, get_settings, units_to_usd
 from research_bot.gordon.client import GordonClient, fetch_skill_md
-from research_bot.models import Market, ResearchNote
+from polymarket_research_core.models import Market, ResearchNote
 from research_bot.pipeline.decomposer import Decomposer
-from research_bot.pipeline.edge import compute_edge
+from polymarket_research_core.edge import compute_edge
 from research_bot.pipeline.estimator import Estimator
-from research_bot.pipeline.notes import build_note, save
+from polymarket_research_core.notes import build_note, save_note
 from research_bot.pipeline.researcher import Researcher
 from research_bot.pipeline.scanner import Scanner
-from research_bot.polymarket.clob import ClobClient
-from research_bot.polymarket.gamma import GammaClient
+from polymarket_research_core.polymarket.clob import ClobClient
+from polymarket_research_core.polymarket.gamma import GammaClient
 from research_bot.store import Store
 
 logger = logging.getLogger(__name__)
@@ -25,8 +25,8 @@ class Orchestrator:
         self.settings = settings or get_settings()
         self.out_dir = out_dir
         self.store = Store(self.settings.database_path)
-        self.gamma = GammaClient(self.settings)
-        self.clob = ClobClient(self.settings)
+        self.gamma = GammaClient(self.settings.polymarket_gamma_url)
+        self.clob = ClobClient(self.settings.polymarket_clob_url)
 
     async def run(
         self, *, limit: int = 5, category: str | None = None,
@@ -76,7 +76,11 @@ class Orchestrator:
             self.store.mark_seen(market)
             return None
 
-        edge = compute_edge(model_prob, price, confidence, self.settings)
+        edge = compute_edge(
+            model_prob, price, confidence,
+            edge_threshold=self.settings.edge_threshold,
+            confidence_threshold=self.settings.confidence_threshold,
+        )
         all_evidence = [e for lst in evidence_by_sub.values() for e in lst]
         cost_units = dcost.amount_units + sum(
             c.amount_units for c in (*rcosts, *ecosts)
@@ -86,7 +90,7 @@ class Orchestrator:
             market, model_prob=model_prob, confidence=confidence, edge=edge,
             estimates=estimates, evidence=all_evidence, cost_units=cost_units,
         )
-        save(note, self.out_dir)
+        save_note(note, self.out_dir)
         self.store.save_note(note)
         self.store.mark_seen(market)
         logger.info(

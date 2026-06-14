@@ -7,7 +7,7 @@ from __future__ import annotations
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
-from research_bot.models import CostRecord, Market, ResearchNote
+from polymarket_research_core.models import CostRecord, Market, ResearchNote
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS markets_seen (

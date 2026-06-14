@@ -15,7 +15,7 @@ from typing import Any
 from research_bot.config import Settings
 from research_bot.gordon.client import GordonClient
 from research_bot.gordon.routing import inference_op
-from research_bot.models import CostRecord
+from polymarket_research_core.models import CostRecord
 
 
 def build_params(settings: Settings, prompt: str, system: str | None, max_tokens: int) -> dict[str, Any]:

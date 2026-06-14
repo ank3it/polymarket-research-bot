@@ -5,8 +5,8 @@ import logging
 from datetime import datetime, timezone
 
 from research_bot.config import Settings
-from research_bot.models import Market
-from research_bot.polymarket.gamma import GammaClient
+from polymarket_research_core.models import Market
+from polymarket_research_core.polymarket.gamma import GammaClient
 from research_bot.store import Store
 
 logger = logging.getLogger(__name__)

@@ -24,7 +24,7 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
 from research_bot.config import Settings, get_settings
-from research_bot.models import CostRecord
+from polymarket_research_core.models import CostRecord
 
 logger = logging.getLogger(__name__)
 

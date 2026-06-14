@@ -11,11 +11,11 @@ import pytest
 from research_bot.budget import BudgetGuard
 from research_bot.config import Settings
 from research_bot.gordon.client import CallResult
-from research_bot.models import CostRecord, Market
+from polymarket_research_core.models import CostRecord, Market
 from research_bot.pipeline.decomposer import Decomposer
-from research_bot.pipeline.edge import compute_edge
+from polymarket_research_core.edge import compute_edge
 from research_bot.pipeline.estimator import Estimator
-from research_bot.pipeline.notes import build_note, render_markdown
+from polymarket_research_core.notes import build_note, render_markdown
 from research_bot.pipeline.researcher import Researcher
 from research_bot.store import Store
 
@@ -105,7 +105,11 @@ async def test_full_pipeline_offline():
 
     # edge + note
     price = market.market_prices["Yes"]
-    edge = compute_edge(model_prob, price, confidence, settings)
+    edge = compute_edge(
+        model_prob, price, confidence,
+        edge_threshold=settings.edge_threshold,
+        confidence_threshold=settings.confidence_threshold,
+    )
     all_ev = [e for lst in evidence_by_sub.values() for e in lst]
     cost_units = dcost.amount_units + sum(c.amount_units for c in (*rcosts, *ecosts))
     note = build_note(market, model_prob=model_prob, confidence=confidence, edge=edge,

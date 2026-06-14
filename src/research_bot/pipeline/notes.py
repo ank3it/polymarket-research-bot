@@ -5,8 +5,8 @@ import logging
 from pathlib import Path
 
 from research_bot.config import units_to_usd
-from research_bot.models import Evidence, Market, ProbabilityEstimate, ResearchNote
-from research_bot.pipeline.edge import EdgeResult
+from polymarket_research_core.models import Evidence, Market, ProbabilityEstimate, ResearchNote
+from polymarket_research_core.edge import EdgeResult
 
 logger = logging.getLogger(__name__)
 

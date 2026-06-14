@@ -14,7 +14,7 @@ from research_bot.budget import BudgetGuard
 from research_bot.config import Settings
 from research_bot.gordon.client import GordonClient, GordonError
 from research_bot.gordon.routing import OpChoice, search_op
-from research_bot.models import Evidence, SubQuestion
+from polymarket_research_core.models import Evidence, SubQuestion
 
 logger = logging.getLogger(__name__)
 

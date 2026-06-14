@@ -7,9 +7,9 @@ import uuid
 from research_bot.config import Settings
 from research_bot.gordon.client import GordonClient
 from research_bot.gordon.inference import complete
-from research_bot.models import CostRecord, Market, SubQuestion
-from research_bot.prompts import DECOMPOSE_SYSTEM, decompose_prompt
-from research_bot.util import clamp01, extract_json
+from polymarket_research_core.models import CostRecord, Market, SubQuestion
+from polymarket_research_core.prompts import DECOMPOSE_SYSTEM, decompose_prompt
+from polymarket_research_core.util import clamp01, extract_json
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 
 from research_bot.config import Settings
-from research_bot.models import CostRecord
+from polymarket_research_core.models import CostRecord
 from research_bot.store import Store
 
 logger = logging.getLogger(__name__)
