@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Env & secrets
+.env
+*.db
+*.sqlite3
+
+# Outputs
+src/research_bot/outputs/notes/*.md
+src/research_bot/outputs/notes/*.json
+outputs/notes/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
