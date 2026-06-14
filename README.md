@@ -58,17 +58,18 @@ to see what your agent can actually call, then set the op slugs in `.env`:
   (e.g. `parallel.task.run`). Falls back gracefully if not enabled.
 - `INFERENCE_OP` — an `ai`-category op for the estimator/decomposer.
 
-> Enabled catalog (Gordon dashboard): **search** — Exa, Tavily, Coingecko,
-> Reversesandbox, Stableenrich, Twit; **ai/LLM** — Blockrun, Nansen, Ottoai;
-> **scrape** — Zlurp; **data** — Oatp, Onesource, Zapper; **infra** — Seerium;
-> **finance** — Stablefinance. Search and inference are both available, so the
-> full pipeline can run.
+> **Verified live against the catalog (Jun 2026):**
+> - **Search — Exa works** (`exa.search.web`, ~$0.007/call). Defaults use it for
+>   both triage and deep research.
+> - **Tavily is blocked** — it's in the catalog but not probe-passed yet
+>   (`SERVICE_NOT_PROBE_PASSED`). Don't point deep research at it until it's verified.
+> - **No general LLM inference op** is enabled (Blockrun/Ottoai/Nansen are data/
+>   research APIs, not chat-completions). So decompose/estimate **degrade to a
+>   placeholder probability** — the search half is fully real, the estimate is not,
+>   until you enable an inference service or wire a direct LLM.
 >
-> Defaults: triage search = Exa, deep research = Tavily, inference = Blockrun.
-> The **service slugs** are correct, but confirm each **operation_id** with
-> `research-bot services "web search"` / `"llm inference"` (the bot reads tool
-> schemas from the live MCP server, not the published `SKILL.md`, which can lag).
-> Missing/disabled ops degrade gracefully — they're skipped, not fatal.
+> Confirm op IDs anytime with `research-bot services "web search"`. Missing or
+> disabled ops degrade gracefully — they're skipped/fallen-back, never fatal.
 
 ## Money semantics
 

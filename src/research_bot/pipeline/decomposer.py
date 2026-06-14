@@ -5,7 +5,7 @@ import logging
 import uuid
 
 from research_bot.config import Settings
-from research_bot.gordon.client import GordonClient
+from research_bot.gordon.client import GordonClient, GordonError
 from research_bot.gordon.inference import complete
 from polymarket_research_core.models import CostRecord, Market, SubQuestion
 from polymarket_research_core.prompts import DECOMPOSE_SYSTEM, decompose_prompt
@@ -26,10 +26,14 @@ class Decomposer:
         self.gordon = gordon
 
     async def decompose(self, market: Market) -> tuple[list[SubQuestion], CostRecord]:
-        text, cost = await complete(
-            self.gordon, self.settings,
-            prompt=decompose_prompt(market), system=DECOMPOSE_SYSTEM, max_tokens=800,
-        )
+        try:
+            text, cost = await complete(
+                self.gordon, self.settings,
+                prompt=decompose_prompt(market), system=DECOMPOSE_SYSTEM, max_tokens=800,
+            )
+        except GordonError as exc:
+            logger.warning("Decompose inference unavailable (%s); using fallback", exc)
+            return _fallback(market), CostRecord(market_id=market.id)
         cost.market_id = market.id
         data = extract_json(text)
 

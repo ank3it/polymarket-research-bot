@@ -29,15 +29,21 @@ class Settings(BaseSettings):
     # ---- Catalog operations (confirm slugs via `research-bot services`) ----
     # Slugs from the enabled Gordon catalog. Confirm exact operation_ids with
     # `research-bot services "<query>"` (gordon_find_service) before a full run.
-    triage_search_op: str = "exa.search.web"      # search · Exa
-    deep_research_op: str = "tavily.search"        # search · Tavily (deeper/pricier)
-    inference_op: str = "blockrun.chat.completions"  # ai · Blockrun (confirm op id)
+    triage_search_op: str = "exa.search.web"      # search · Exa (verified)
+    # Tavily exists in the catalog but is not probe-passed yet, so Gordon blocks it
+    # (SERVICE_NOT_PROBE_PASSED). Default deep research to Exa until a deeper
+    # provider is verified.
+    deep_research_op: str = "exa.search.web"
+    # NOTE: the enabled catalog currently has NO general chat-completions service,
+    # so decompose/estimate degrade to a placeholder probability. Point this at a
+    # real inference op once one is enabled (or wire a direct LLM).
+    inference_op: str = "blockrun.chat.completions"
     # Model passed to the inference op (depends on the catalog operation's schema)
     inference_model: str = "claude-3-5-sonnet-latest"
 
     # ---- Budget / routing (micro-units) ----
     triage_max_units: int = 10_000        # $0.01
-    deep_max_units: int = 300_000         # $0.30
+    deep_max_units: int = 10_000          # $0.01 (keep ≤ daily budget or calls are skipped)
     inference_max_units: int = 50_000     # $0.05
     daily_budget_units: int = 5_000_000   # $5.00
     estimator_samples: int = 5

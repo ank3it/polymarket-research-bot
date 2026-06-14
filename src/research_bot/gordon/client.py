@@ -17,6 +17,7 @@ import json
 import logging
 from contextlib import AsyncExitStack
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Any
 
 import httpx
@@ -141,7 +142,11 @@ class GordonClient:
         self._stack = AsyncExitStack()
         headers = {"Authorization": self.settings.gordon_auth_header}
         read, write, *_ = await self._stack.enter_async_context(
-            streamablehttp_client(self.settings.gordon_mcp_url, headers=headers)
+            streamablehttp_client(
+                self.settings.gordon_mcp_url,
+                headers=headers,
+                timeout=timedelta(seconds=30),
+            )
         )
         self._session = await self._stack.enter_async_context(ClientSession(read, write))
         await self._session.initialize()
@@ -149,9 +154,15 @@ class GordonClient:
 
     async def close(self) -> None:
         if self._stack is not None:
-            await self._stack.aclose()
-            self._stack = None
-            self._session = None
+            try:
+                await self._stack.aclose()
+            except Exception as exc:  # noqa: BLE001
+                # The MCP streamable transport can raise anyio cross-task
+                # cancel-scope errors during teardown; the work is already done.
+                logger.debug("Gordon MCP teardown error (ignored): %s", exc)
+            finally:
+                self._stack = None
+                self._session = None
 
     @property
     def session(self) -> ClientSession:
